@@ -54,10 +54,8 @@ Create redis name and version as used by the chart label.
 {{- define "argo-cd.redis.fullname" -}}
 {{- $redisHa := (index .Values "redis-ha") -}}
 {{- $redisHaContext := dict "Chart" (dict "Name" "redis-ha") "Release" .Release "Values" $redisHa -}}
-{{- if $redisHa.enabled -}}
-    {{- if $redisHa.haproxy.enabled -}}
-        {{- printf "%s-haproxy" (include "redis-ha.fullname" $redisHaContext) | trunc 63 | trimSuffix "-" -}}
-    {{- end -}}
+{{- if and $redisHa.enabled $redisHa.haproxy.enabled -}}
+{{- printf "%s-haproxy" (include "redis-ha.fullname" $redisHaContext) | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- printf "%s-%s" (include "argo-cd.fullname" .) .Values.redis.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
